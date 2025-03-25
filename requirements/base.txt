@@ -1,5 +1,5 @@
-fastapi==0.115.12
-uvicorn==0.34.0
+fastapi[standard]==0.115.12
+uvicorn[standard]==0.34.0
 pydantic==2.10.6
 pydantic-settings==2.8.1
 
@@ -10,5 +10,10 @@ asyncpg==0.30.0
 psycopg2-binary==2.9.10
 
 httpx==0.28.1
+
+cachetools==5.5.2
+
+bcrypt==4.3.0
+python-jose==3.4.0
 
 alembic==1.15.1

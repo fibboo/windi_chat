@@ -60,7 +60,7 @@ class CRUDBase(Generic[Model, CreateSchema, UpdateSchema]):
                      obj_in: CreateSchema | dict[str, Any],
                      flush: bool | None = True,
                      commit: bool | None = False) -> Model:
-        obj_data = obj_in
+        obj_data: dict = obj_in
         if isinstance(obj_in, BaseModel):
             obj_data = obj_in.model_dump(exclude_unset=True)
 
@@ -72,6 +72,29 @@ class CRUDBase(Generic[Model, CreateSchema, UpdateSchema]):
             await db.commit()
         await db.refresh(db_obj)
         return db_obj
+
+    async def create_batch(self,
+                           db: AsyncSession,
+                           objs_in: list[CreateSchema] | list[dict[str, Any]],
+                           flush: bool | None = True,
+                           commit: bool | None = False) -> list[Model]:
+        objs_data: list[dict[str, Any]] = []
+        for obj_in in objs_in:
+            obj_data = obj_in
+            if isinstance(obj_in, BaseModel):
+                obj_data = obj_in.model_dump(exclude_unset=True)
+            objs_data.append(obj_data)
+
+        db_objs: list[Model] = [self.model(**obj_data) for obj_data in objs_data]
+        db.add_all(db_objs)
+        if flush:
+            await db.flush()
+        if commit:
+            await db.commit()
+        for db_obj in db_objs:
+            await db.refresh(db_obj)
+
+        return db_objs
 
     async def update(self,
                      db: AsyncSession,

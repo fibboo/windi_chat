@@ -7,14 +7,14 @@ from app.exceptions.base import AppBaseException
 from app.schemas.error_response import ErrorCodeType
 
 
-class UnprocessableException(AppBaseException):
+class BadRequestException(AppBaseException):
     def __init__(self,
+                 message: str,
                  log_message: str,
                  logger: logging.Logger,
-                 log_level: LogLevelType = LogLevelType.WARNING,
-                 message: str = 'Unprocessable Content',
-                 error_code: ErrorCodeType | None = None):
-        super().__init__(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                 log_level: LogLevelType,
+                 error_code: ErrorCodeType | None):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST,
                          message=message,
                          log_message=log_message,
                          logger=logger,

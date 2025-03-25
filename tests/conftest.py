@@ -16,19 +16,21 @@ async def engine(postgresql):
 
 
 @pytest_asyncio.fixture
-async def db_fixture(engine):
+async def db(engine):
     session_maker = async_sessionmaker(engine, autocommit=False, autoflush=False, expire_on_commit=False)
-    session = session_maker()
 
-    yield session
+    try:
+        async with session_maker() as session:
+            yield session
 
-    await session.close()
+    finally:
+        await session.commit()
+        await session.close()
 
 
 @pytest_asyncio.fixture
-async def db_fixture_transaction(engine):
+async def db_transaction(engine):
     session_maker = async_sessionmaker(engine, autocommit=False, autoflush=False, expire_on_commit=False)
-
     try:
         async with session_maker.begin() as session:
             yield session

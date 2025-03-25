@@ -27,8 +27,13 @@ class DatabaseSettings(BaseSettings):
 database_settings = DatabaseSettings()
 
 
-class ExampleSettingsWithPrefix(BaseSettings):
-    param1: int = 1
-    param2: str = '2'
+class JWTSettings(BaseSettings):
+    algorithm: str = 'HS256'
+    secret_key: str = 'secretkey'
+    access_token_expire_seconds: int = 60 * 5  # 5 minutes
+    refresh_token_expire_seconds: int = 60 * 60 * 24 * 30  # 30 days
 
-    model_config = SettingsConfigDict(env_prefix='example_')
+    model_config = SettingsConfigDict(env_prefix='jwt_')
+
+
+jwt_settings = JWTSettings()
